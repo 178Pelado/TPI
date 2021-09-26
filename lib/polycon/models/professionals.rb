@@ -7,8 +7,8 @@ module Polycon
       end
 
       def self.listar_prof
-        Dir.children(".").each do |single|
-          puts single
+        Dir.children(".").each do |prof|
+          puts prof
         end
       end
 
