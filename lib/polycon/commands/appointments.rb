@@ -1,6 +1,3 @@
-require "polycon/utils.rb"
-require "polycon/models/appointments.rb"
-
 module Polycon
   module Commands
     module Appointments
@@ -24,17 +21,16 @@ module Polycon
           util.posicionarme()
           appo = Polycon::Models::Appointments
           if util.existe_prof?(professional)
-            Dir.chdir(professional) #Modificar método posicionarme, con parámetro opcional
+            appo.posicionarme_prof(professional)
             if not appo.existe_turno?(date)
-              appo.crear_turno(date, professional, name, surname, phone, notes)
-              warn "Se creó un turno con el profesioanl #{professional} para el #{date}"
+              appo.crear_turno(date, name, surname, phone, notes)
+              warn "Se creó un turno con el profesional #{professional} para el #{date}"
             else
               warn "No se pudo crear el turno, debido a que existe otro turno para esa fecha"
             end
           else
             warn "No se pudo crear el turno, debido a que no existe el profesional #{professional}"
           end
-          
         end
       end
 
@@ -54,10 +50,9 @@ module Polycon
           util.posicionarme()
           appo = Polycon::Models::Appointments
           if util.existe_prof?(professional)
-            Dir.chdir(professional)
+            appo.posicionarme_prof(professional)
             if appo.existe_turno?(date)
-              turno = appo.leer_turno(date)
-              appo.mostrar_turno(turno)
+              puts appo.leer_turno(date)
             else
               warn "No existe un turno para el #{date} con el profesional #{professional}"
             end
@@ -83,7 +78,7 @@ module Polycon
           util.posicionarme()
           appo = Polycon::Models::Appointments
           if util.existe_prof?(professional)
-            Dir.chdir(professional)
+            appo.posicionarme_prof(professional)
             if appo.existe_turno?(date)
               appo.cancelar_turno(date)
               warn "Se canceló el turno con el profesional #{professional}"
@@ -111,7 +106,7 @@ module Polycon
           util.posicionarme()
           appo = Polycon::Models::Appointments
           if util.existe_prof?(professional)
-            Dir.chdir(professional)
+            appo.posicionarme_prof(professional)
             appo.cancelar_turnos()
             warn "Se cancelaron todos los turnos del profesional #{professional}"
           else
@@ -137,8 +132,7 @@ module Polycon
           util.posicionarme()
           appo = Polycon::Models::Appointments
           if util.existe_prof?(professional)
-            Dir.chdir(professional)
-            appo.listar_turnos(professional, date)
+            puts appo.listar_turnos(professional, date)
           else
             warn "No se pudieron listar turnos, debido a que no existe el profesional #{professional}"
           end
@@ -162,7 +156,7 @@ module Polycon
           util.posicionarme()
           appo = Polycon::Models::Appointments
           if util.existe_prof?(professional)
-            Dir.chdir(professional)
+            appo.posicionarme_prof(professional)
             if not appo.existe_turno?(new_date)
               if appo.existe_turno?(old_date)
                 appo.reprogramar_turno(old_date, new_date)
@@ -201,20 +195,12 @@ module Polycon
           util.posicionarme()
           appo = Polycon::Models::Appointments
           if util.existe_prof?(professional)
-            Dir.chdir(professional)
+            appo.posicionarme_prof(professional)
             if appo.existe_turno?(date)
-              turno = File.readlines("#{appo.fecha_guion(date)}.paf")
-              turno[0] = "#{options[:surname]}\n" if options[:surname] != nil
-              turno[1] = "#{options[:name]}\n" if options[:name] != nil
-              turno[2] = "#{options[:phone]}\n" if options[:phone] != nil
-              turno[3] = "#{options[:notes]}\n" if options[:notes] != nil
-              appo.crear_turno(date, professional, turno[1], turno[0], turno[2], turno[3])
-              warn "Se comodificó correctamente el turno #{date} con el profesional #{professional}"
-            else
-              warn "No se pudo editar el turno para el #{date} con el profesional #{professional}, debido a que no existe en el sistema"
+              turno = appo.from_file(date)
+              turno.edit(options)
+              turno.save(date)
             end
-          else
-            warn "No se pudo editar el turno, debido a que no existe el profesional #{professional}"
           end
         end
       end
