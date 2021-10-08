@@ -110,7 +110,7 @@ module Polycon
         begin
           Date.strptime(date, '%Y-%m-%d')
           true
-        rescue ArgumentError
+        rescue
           false
         end
       end
