@@ -1,12 +1,8 @@
-require "polycon/utils.rb"
-require "polycon/models/professionals.rb"
-
 module Polycon
   module Commands
     module Professionals
 
       class Create < Dry::CLI::Command
-        #include X
         desc 'Create a professional'
 
         argument :name, required: true, desc: 'Full name of the professional'
@@ -17,11 +13,9 @@ module Polycon
         ]
 
         def call(name:, **)
-          warn "TODO: Implementar creación de un o una profesional con nombre '#{name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
           util = Polycon::Utils
           util.posicionarme()
-          prof = Polycon::Models::Professionals 
-          #preguntar si se puede globalizar, alta paja el path completo
+          prof = Polycon::Models::Professionals
           if util.existe_prof?(name)
             warn "Ya existe un profesional llamado #{name}"
           else
@@ -42,7 +36,6 @@ module Polycon
         ]
 
         def call(name: nil)
-          warn "TODO: Implementar borrado de la o el profesional con nombre '#{name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
           util = Polycon::Utils
           util.posicionarme()
           prof = Polycon::Models::Professionals
@@ -67,7 +60,6 @@ module Polycon
         ]
 
         def call(*)
-          warn "TODO: Implementar listado de profesionales.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
           Polycon::Utils.posicionarme()
           prof = Polycon::Models::Professionals
           if prof.existen_prof?
@@ -89,13 +81,16 @@ module Polycon
         ]
 
         def call(old_name:, new_name:, **)
-          warn "TODO: Implementar renombrado de profesionales con nombre '#{old_name}' para que pase a llamarse '#{new_name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
           util = Polycon::Utils
           util.posicionarme()
           prof = Polycon::Models::Professionals
           if util.existe_prof?(old_name)
-            prof.renombrar_prof(old_name, new_name)
-            warn "Se actualizó el profesional #{old_name} y ahora se llama #{new_name}"
+            if not util.existe_prof?(new_name)
+              prof.renombrar_prof(old_name, new_name)
+              warn "Se actualizó el profesional #{old_name} y ahora se llama #{new_name}"
+            else
+              warn "No se puede renombrar al profesional, debido a que ya existe uno llamado #{new_name}"
+            end
           else
             warn "No se puede renombrar al profesional, debido a que no existe ninguno llamado #{old_name}"
           end

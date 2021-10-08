@@ -33,7 +33,7 @@ module Polycon
         end
       end
 
-      def create_path(date)
+      def self.create_path(date)
         "#{fecha_guion(date)}.paf"
       end
       
@@ -46,23 +46,23 @@ module Polycon
       end
 
       def self.crear_turno(date, name, surname, phone, notes = nil)
-        File.write("#{self.fecha_guion(date)}.paf", "#{surname}\n#{name}\n#{phone}\n#{notes}")
+        File.write(self.create_path(date), "#{surname}\n#{name}\n#{phone}\n#{notes}")
       end
 
       def self.existe_turno?(date)
-        File.exists?("#{self.fecha_guion(date)}.paf")
+        File.exists?(self.create_path(date))
       end
 
       def self.leer_turno(date)
-        File.read("#{self.fecha_guion(date)}.paf")
+        File.read(self.create_path(date))
       end
 
       def self.cancelar_turno(date)
-        File.delete("#{self.fecha_guion(date)}.paf")
+        File.delete(self.create_path(date))
       end
 
       def self.cancelar_turnos()
-        f_actual = Time.now.strftime("%Y-%m-%d_%H:%M")
+        f_actual = Time.now.strftime("%Y-%m-%d_%H-%M")
         Dir.foreach(".") do |turno|
           if (turno > f_actual)
             File.delete(turno)
@@ -89,8 +89,30 @@ module Polycon
         turnos
       end
 
+      def self.fecha_posterior?(date)
+        date > Time.now.strftime("%Y-%m-%d %H:%M")
+      end
+
       def self.reprogramar_turno(old_date, new_date)
-        File.rename("#{self.fecha_guion(old_date)}.paf", "#{self.fecha_guion(new_date)}.paf")
+        File.rename(self.create_path(old_date), self.create_path(new_date))
+      end
+
+      def self.fecha_hora_correcta?(date)
+        begin
+          DateTime.strptime(date, '%Y-%m-%d %H:%M')
+          true
+        rescue
+          false
+        end
+      end
+
+      def self.fecha_correcta?(date)
+        begin
+          Date.strptime(date, '%Y-%m-%d')
+          true
+        rescue ArgumentError
+          false
+        end
       end
     end
   end

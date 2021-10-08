@@ -1,6 +1,7 @@
 module Polycon
   module Commands
     module Appointments
+
       class Create < Dry::CLI::Command
         desc 'Create an appointment'
 
@@ -16,20 +17,27 @@ module Polycon
         ]
 
         def call(date:, professional:, name:, surname:, phone:, notes: nil)
-          warn "TODO: Implementar creación de un turno con fecha '#{date}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
           util = Polycon::Utils
           util.posicionarme()
           appo = Polycon::Models::Appointments
-          if util.existe_prof?(professional)
-            appo.posicionarme_prof(professional)
-            if not appo.existe_turno?(date)
-              appo.crear_turno(date, name, surname, phone, notes)
-              warn "Se creó un turno con el profesional #{professional} para el #{date}"
+          if appo.fecha_hora_correcta?(date)
+            if appo.fecha_posterior?(date)
+              if util.existe_prof?(professional)
+                appo.posicionarme_prof(professional)
+                if not appo.existe_turno?(date)
+                  appo.crear_turno(date, name, surname, phone, notes)
+                  warn "Se creó un turno con el profesional #{professional} para el #{date}"
+                else
+                  warn "No se pudo crear el turno, debido a que existe otro turno para esa fecha"
+                end
+              else
+                warn "No se pudo crear el turno, debido a que no existe el profesional #{professional}"
+              end
             else
-              warn "No se pudo crear el turno, debido a que existe otro turno para esa fecha"
+              warn "No se pudo crear el turno, debido a que #{date} es anterior a la fecha actual"
             end
           else
-            warn "No se pudo crear el turno, debido a que no existe el profesional #{professional}"
+            warn "No se pudo crear el turno, debido a que la fecha #{date} no respeta el formato"
           end
         end
       end
@@ -45,19 +53,22 @@ module Polycon
         ]
 
         def call(date:, professional:)
-          warn "TODO: Implementar detalles de un turno con fecha '#{date}' y profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
           util = Polycon::Utils
           util.posicionarme()
           appo = Polycon::Models::Appointments
-          if util.existe_prof?(professional)
-            appo.posicionarme_prof(professional)
-            if appo.existe_turno?(date)
-              puts appo.leer_turno(date)
+          if appo.fecha_hora_correcta?(date)
+            if util.existe_prof?(professional)
+              appo.posicionarme_prof(professional)
+              if appo.existe_turno?(date)
+                puts appo.leer_turno(date)
+              else
+                warn "No existe un turno para el #{date} con el profesional #{professional}"
+              end
             else
-              warn "No existe un turno para el #{date} con el profesional #{professional}"
+              warn "No se pudo mostrar el turno, debido a que no existe el profesional #{professional}"
             end
           else
-            warn "No se pudo mostrar el turno, debido a que no existe el profesional #{professional}"
+            warn "No se pudo mostrar el turno, debido a que la fecha #{date} no respeta el formato"
           end
         end
       end
@@ -73,20 +84,23 @@ module Polycon
         ]
 
         def call(date:, professional:)
-          warn "TODO: Implementar borrado de un turno con fecha '#{date}' y profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
           util = Polycon::Utils
           util.posicionarme()
           appo = Polycon::Models::Appointments
-          if util.existe_prof?(professional)
-            appo.posicionarme_prof(professional)
-            if appo.existe_turno?(date)
-              appo.cancelar_turno(date)
-              warn "Se canceló el turno con el profesional #{professional}"
+          if appo.fecha_hora_correcta?(date)
+            if util.existe_prof?(professional)
+              appo.posicionarme_prof(professional)
+              if appo.existe_turno?(date)
+                appo.cancelar_turno(date)
+                warn "Se canceló el turno con el profesional #{professional}"
+              else
+                warn "No se pudo cancelar el turno para el #{date} con el profesional #{professional}, debido a que no existe en el sistema"
+              end
             else
-              warn "No se pudo cancelar el turno para el #{date} con el profesional #{professional}, debido a que no existe en el sistema"
+              warn "No se pudo cancelar el turno, debido a que no existe el profesional #{professional}"
             end
           else
-            warn "No se pudo cancelar el turno, debido a que no existe el profesional #{professional}"
+            warn "No se pudo cancelar el turno, debido a que la fecha #{date} no respeta el formato"
           end
         end
       end
@@ -101,7 +115,6 @@ module Polycon
         ]
 
         def call(professional:)
-          warn "TODO: Implementar borrado de todos los turnos de la o el profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
           util = Polycon::Utils
           util.posicionarme()
           appo = Polycon::Models::Appointments
@@ -127,15 +140,23 @@ module Polycon
         ]
 
         def call(professional:, date: nil)
-          warn "TODO: Implementar listado de turnos de la o el profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
           util = Polycon::Utils
           util.posicionarme()
           appo = Polycon::Models::Appointments
-          if util.existe_prof?(professional)
-            puts appo.listar_turnos(professional, date)
+          if (date.nil?) || appo.fecha_correcta?(date)
+            if util.existe_prof?(professional)
+              turnos = appo.listar_turnos(professional, date)
+              if turnos.empty?
+                warn "No hay turnos para el #{date}"
+              else
+                puts turnos
+              end
+            else
+              warn "No se pudieron listar turnos, debido a que no existe el profesional #{professional}"
+            end
           else
-            warn "No se pudieron listar turnos, debido a que no existe el profesional #{professional}"
-          end
+            warn "No se pudieron listar turnos, debido a que la fecha #{date} no respeta el formato"
+          end 
         end
       end
 
@@ -151,25 +172,36 @@ module Polycon
         ]
 
         def call(old_date:, new_date:, professional:)
-          warn "TODO: Implementar cambio de fecha de turno con fecha '#{old_date}' para que pase a ser '#{new_date}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
           util = Polycon::Utils
           util.posicionarme()
           appo = Polycon::Models::Appointments
-          if util.existe_prof?(professional)
-            appo.posicionarme_prof(professional)
-            if not appo.existe_turno?(new_date)
-              if appo.existe_turno?(old_date)
-                appo.reprogramar_turno(old_date, new_date)
-                warn "Se reprogramó el turno #{old_date} para #{new_date} del profesional #{professional}"
+          if appo.fecha_hora_correcta?(old_date)
+            if appo.fecha_hora_correcta?(new_date)
+              if util.existe_prof?(professional)
+                appo.posicionarme_prof(professional)
+                if appo.existe_turno?(old_date)
+                  if not appo.existe_turno?(new_date)
+                    if appo.fecha_posterior?(new_date)
+                      appo.reprogramar_turno(old_date, new_date)
+                      warn "Se reprogramó el turno #{old_date} para #{new_date} del profesional #{professional}"
+                    else
+                      warn "No se pudo reprogramar el turno, debido a que #{new_date} es anterior a la fecha actual"
+                    end
+                  else
+                    warn "No se pudo reprogramar el turno, debido a que existe otro turno para esa fecha"
+                  end
+                else
+                  warn "No se pudo reprogramar el turno para el #{old_date} con el profesional #{professional}, debido a que no existe en el sistema"
+                end
               else
-                warn "No se pudo reprogramar el turno para el #{date} con el profesional #{professional}, debido a que no existe en el sistema"
+                warn "No se pudo reprogramar el turno, debido a que no existe el profesional #{professional}"
               end
             else
-              warn "No se pudo reprogramar el turno, debido a que existe otro turno para esa fecha"
+              warn "No se pudo reprogramar el turno, debido a que la fecha #{new_date} no respeta el formato"
             end
           else
-            warn "No se pudo reprogramar el turno, debido a que no existe el profesional #{professional}"
-          end
+            warn "No se pudo reprogramar el turno, debido a que la fecha #{old_date} no respeta el formato"
+          end 
         end
       end
 
@@ -190,17 +222,25 @@ module Polycon
         ]
 
         def call(date:, professional:, **options)
-          warn "TODO: Implementar modificación de un turno de la o el profesional '#{professional}' con fecha '#{date}', para cambiarle la siguiente información: #{options}.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
           util = Polycon::Utils
           util.posicionarme()
           appo = Polycon::Models::Appointments
-          if util.existe_prof?(professional)
-            appo.posicionarme_prof(professional)
-            if appo.existe_turno?(date)
-              turno = appo.from_file(date)
-              turno.edit(options)
-              turno.save(date)
+          if appo.fecha_hora_correcta?(date)
+            if util.existe_prof?(professional)
+              appo.posicionarme_prof(professional)
+              if appo.existe_turno?(date)
+                turno = appo.from_file(date)
+                turno.edit(options)
+                turno.save(date)
+                warn "Se editó el turno #{date} del profesional #{professional}"
+              else
+                warn "No se pudo editar el turno para el #{date} con el profesional #{professional}, debido a que no existe en el sistema"
+              end
+            else
+              warn "No se pudo editar el turno, debido a que no existe el profesional #{professional}"
             end
+          else
+            warn "No se pudo editar el turno, debido a que la fecha #{date} no respeta el formato"
           end
         end
       end

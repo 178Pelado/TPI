@@ -3,8 +3,8 @@ module Polycon
     
     def self.posicionarme
       Dir.chdir(ENV["HOME"])
-      Dir.mkdir("Polycon") unless File.exists?("Polycon")
-      Dir.chdir("Polycon")
+      Dir.mkdir(".polycon") unless File.exists?(".polycon")
+      Dir.chdir(".polycon")
     end
 
     def self.existe_prof?(name)

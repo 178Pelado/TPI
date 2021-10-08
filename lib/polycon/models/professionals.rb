@@ -25,12 +25,13 @@ module Polycon
       end
 
       def self.hay_turno_prof?(name)
-        f_actual = Time.now.strftime("%Y-%m-%d_%H:%M")
+        f_actual = Time.now.strftime("%Y-%m-%d_%H-%M")
         Dir.foreach("./#{name}") do |turno|
           if (turno > f_actual)
             return true
           end
         end
+        false
       end
 
     end
