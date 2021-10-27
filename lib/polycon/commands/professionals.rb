@@ -13,13 +13,11 @@ module Polycon
         ]
 
         def call(name:, **)
-          util = Polycon::Utils
-          util.posicionarme()
-          prof = Polycon::Models::Professionals
-          if util.existe_prof?(name)
+          Polycon::Utils.posicionarme()
+          if Polycon::Utils.existe_prof?(name)
             warn "Ya existe un profesional llamado #{name}"
           else
-            prof.crear_prof(name)
+            Polycon::Models::Professionals.crear_prof(name)
             warn "Se creó correctamente al profesional #{name}"
           end
         end
@@ -36,12 +34,10 @@ module Polycon
         ]
 
         def call(name: nil)
-          util = Polycon::Utils
-          util.posicionarme()
-          prof = Polycon::Models::Professionals
-          if util.existe_prof?(name)
-            if not prof.hay_turno_prof?(name)
-              prof.eliminar_prof(name)
+          Polycon::Utils.posicionarme()
+          if Polycon::Utils.existe_prof?(name)
+            if ! Polycon::Models::Professionals.hay_turno_prof?(name)
+              Polycon::Models::Professionals.eliminar_prof(name)
               warn "Se eiminó al profesional #{name}"
             else
               warn "No se puede eliminar al profesional, debido a que tiene turnos pendientes"
@@ -61,9 +57,8 @@ module Polycon
 
         def call(*)
           Polycon::Utils.posicionarme()
-          prof = Polycon::Models::Professionals
-          if prof.existen_prof?
-            prof.listar_prof
+          if Polycon::Models::Professionals.existen_prof?
+            Polycon::Models::Professionals.listar_prof
           else
             warn "No hay profesionales cargados en el sistema"
           end
@@ -81,12 +76,10 @@ module Polycon
         ]
 
         def call(old_name:, new_name:, **)
-          util = Polycon::Utils
-          util.posicionarme()
-          prof = Polycon::Models::Professionals
-          if util.existe_prof?(old_name)
-            if not util.existe_prof?(new_name)
-              prof.renombrar_prof(old_name, new_name)
+          Polycon::Utils.posicionarme()
+          if Polycon::Utils.existe_prof?(old_name)
+            if ! Polycon::Utils.existe_prof?(new_name)
+              Polycon::Models::Professionals.renombrar_prof(old_name, new_name)
               warn "Se actualizó el profesional #{old_name} y ahora se llama #{new_name}"
             else
               warn "No se puede renombrar al profesional, debido a que ya existe uno llamado #{new_name}"

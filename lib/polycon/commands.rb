@@ -2,6 +2,7 @@ module Polycon
   module Commands
     autoload :Professionals, 'polycon/commands/professionals'
     autoload :Appointments, 'polycon/commands/appointments'
+    autoload :Templates, 'polycon/commands/templates'
     autoload :Version, 'polycon/commands/version'
 
     extend Dry::CLI::Registry
@@ -21,6 +22,11 @@ module Polycon
       prefix.register 'show', Appointments::Show
       prefix.register 'cancel', Appointments::Cancel
       prefix.register 'cancel-all', Appointments::CancelAll
+    end
+
+    register 'templates', aliases: ['t'] do |prefix|
+      prefix.register 'create_day', Templates::CreateDay
+      prefix.register 'create_week', Templates::CreateWeek
     end
 
     register 'version', Version, aliases: ['v', '-v', '--version']

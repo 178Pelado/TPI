@@ -17,15 +17,13 @@ module Polycon
         ]
 
         def call(date:, professional:, name:, surname:, phone:, notes: nil)
-          util = Polycon::Utils
-          util.posicionarme()
-          appo = Polycon::Models::Appointments
-          if appo.fecha_hora_correcta?(date)
-            if appo.fecha_posterior?(date)
-              if util.existe_prof?(professional)
-                appo.posicionarme_prof(professional)
-                if not appo.existe_turno?(date)
-                  appo.crear_turno(date, name, surname, phone, notes)
+          Polycon::Utils.posicionarme()
+          if Polycon::Models::Appointments.fecha_hora_correcta?(date)
+            if Polycon::Models::Appointments.fecha_posterior?(date)
+              if Polycon::Utils.existe_prof?(professional)
+                Polycon::Models::Appointments.posicionarme_prof(professional)
+                if ! Polycon::Models::Appointments.existe_turno?(date)
+                  Polycon::Models::Appointments.crear_turno(date, name, surname, phone, notes)
                   warn "Se creó un turno con el profesional #{professional} para el #{date}"
                 else
                   warn "No se pudo crear el turno, debido a que existe otro turno para esa fecha"
@@ -53,14 +51,12 @@ module Polycon
         ]
 
         def call(date:, professional:)
-          util = Polycon::Utils
-          util.posicionarme()
-          appo = Polycon::Models::Appointments
-          if appo.fecha_hora_correcta?(date)
-            if util.existe_prof?(professional)
-              appo.posicionarme_prof(professional)
-              if appo.existe_turno?(date)
-                puts appo.leer_turno(date)
+          Polycon::Utils.posicionarme()
+          if Polycon::Models::Appointments.fecha_hora_correcta?(date)
+            if Polycon::Utils.existe_prof?(professional)
+              Polycon::Models::Appointments.posicionarme_prof(professional)
+              if Polycon::Models::Appointments.existe_turno?(date)
+                puts Polycon::Models::Appointments.leer_turno(date)
               else
                 warn "No existe un turno para el #{date} con el profesional #{professional}"
               end
@@ -84,14 +80,12 @@ module Polycon
         ]
 
         def call(date:, professional:)
-          util = Polycon::Utils
-          util.posicionarme()
-          appo = Polycon::Models::Appointments
-          if appo.fecha_hora_correcta?(date)
-            if util.existe_prof?(professional)
-              appo.posicionarme_prof(professional)
-              if appo.existe_turno?(date)
-                appo.cancelar_turno(date)
+          Polycon::Utils.posicionarme()
+          if Polycon::Models::Appointments.fecha_hora_correcta?(date)
+            if Polycon::Utils.existe_prof?(professional)
+              Polycon::Models::Appointments.posicionarme_prof(professional)
+              if Polycon::Models::Appointments.existe_turno?(date)
+                Polycon::Models::Appointments.cancelar_turno(date)
                 warn "Se canceló el turno con el profesional #{professional}"
               else
                 warn "No se pudo cancelar el turno para el #{date} con el profesional #{professional}, debido a que no existe en el sistema"
@@ -115,12 +109,10 @@ module Polycon
         ]
 
         def call(professional:)
-          util = Polycon::Utils
-          util.posicionarme()
-          appo = Polycon::Models::Appointments
-          if util.existe_prof?(professional)
-            appo.posicionarme_prof(professional)
-            appo.cancelar_turnos()
+          Polycon::Utils.posicionarme()
+          if Polycon::Utils.existe_prof?(professional)
+            Polycon::Models::Appointments.posicionarme_prof(professional)
+            Polycon::Models::Appointments.cancelar_turnos()
             warn "Se cancelaron todos los turnos del profesional #{professional}"
           else
             warn "No se pudieron cancelar turnos, debido a que no existe el profesional #{professional}"
@@ -140,12 +132,10 @@ module Polycon
         ]
 
         def call(professional:, date: nil)
-          util = Polycon::Utils
-          util.posicionarme()
-          appo = Polycon::Models::Appointments
-          if (date.nil?) || appo.fecha_correcta?(date)
-            if util.existe_prof?(professional)
-              turnos = appo.listar_turnos(professional, date)
+          Polycon::Utils.posicionarme()
+          if (date.nil?) || Polycon::Models::Appointments.fecha_correcta?(date)
+            if Polycon::Utils.existe_prof?(professional)
+              turnos = Polycon::Models::Appointments.listar_turnos(professional, date)
               if turnos.empty?
                 warn "No hay turnos para el #{date}"
               else
@@ -172,17 +162,15 @@ module Polycon
         ]
 
         def call(old_date:, new_date:, professional:)
-          util = Polycon::Utils
-          util.posicionarme()
-          appo = Polycon::Models::Appointments
-          if appo.fecha_hora_correcta?(old_date)
-            if appo.fecha_hora_correcta?(new_date)
-              if util.existe_prof?(professional)
-                appo.posicionarme_prof(professional)
-                if appo.existe_turno?(old_date)
-                  if not appo.existe_turno?(new_date)
-                    if appo.fecha_posterior?(new_date)
-                      appo.reprogramar_turno(old_date, new_date)
+          Polycon::Utils.posicionarme()
+          if Polycon::Models::Appointments.fecha_hora_correcta?(old_date)
+            if Polycon::Models::Appointments.fecha_hora_correcta?(new_date)
+              if Polycon::Utils.existe_prof?(professional)
+                Polycon::Models::Appointments.posicionarme_prof(professional)
+                if Polycon::Models::Appointments.existe_turno?(old_date)
+                  if ! Polycon::Models::Appointments.existe_turno?(new_date)
+                    if Polycon::Models::Appointments.fecha_posterior?(new_date)
+                      Polycon::Models::Appointments.reprogramar_turno(old_date, new_date)
                       warn "Se reprogramó el turno #{old_date} para #{new_date} del profesional #{professional}"
                     else
                       warn "No se pudo reprogramar el turno, debido a que #{new_date} es anterior a la fecha actual"
@@ -222,14 +210,12 @@ module Polycon
         ]
 
         def call(date:, professional:, **options)
-          util = Polycon::Utils
-          util.posicionarme()
-          appo = Polycon::Models::Appointments
-          if appo.fecha_hora_correcta?(date)
-            if util.existe_prof?(professional)
-              appo.posicionarme_prof(professional)
-              if appo.existe_turno?(date)
-                turno = appo.from_file(date)
+          Polycon::Utils.posicionarme()
+          if Polycon::Models::Appointments.fecha_hora_correcta?(date)
+            if Polycon::Utils.existe_prof?(professional)
+              Polycon::Models::Appointments.posicionarme_prof(professional)
+              if Polycon::Models::Appointments.existe_turno?(date)
+                turno = Polycon::Models::Appointments.from_file(date)
                 turno.edit(options)
                 turno.save(date)
                 warn "Se editó el turno #{date} del profesional #{professional}"

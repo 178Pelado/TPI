@@ -1,12 +1,15 @@
 require 'date'
+require 'time'
 
 module Polycon
   module Models
     class Appointments
-      attr_accessor :date, :name, :surname, :phone, :notes
+      attr_accessor :date, :name, :surname, :phone, :notes, :professional
 
       def self.from_file(date)
         appointment = new
+        appointment.professional = File.basename(Dir.getwd)
+        appointment.date = date
         path = "#{self.fecha_guion(date)}.paf"
         File.open(path, 'r') do |file|
           appointment.surname = file.gets.chomp
@@ -31,6 +34,14 @@ module Polycon
         options.each do |key, value|
           self.send(:"#{key}=", value)
         end
+      end
+
+      def fecha()
+        Date.strptime(self.date, '%Y-%m-%d')
+      end
+
+      def hora()
+        self.date[11..].gsub "-", ":" #Mejorar
       end
 
       def self.create_path(date)
@@ -71,6 +82,13 @@ module Polycon
       end
 
       def self.listar_turnos(professional, date = nil)
+
+        #prof = Polycon::Models::Professionals.find(professional)
+        #appts = prof.appointments
+        #if options[:date]
+        #  appts = appts.selct { |appt| appt.date == options[:date] }
+        #end
+
         turnos = []
         if date == nil
           Dir.children(professional).each do |turno|

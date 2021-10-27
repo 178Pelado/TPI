@@ -10,5 +10,16 @@ module Polycon
     def self.existe_prof?(name)
       File.exists?(name)
     end
+
+    def self.horas()
+      horas = []
+      (8...20).each do |h|
+        horas << "#{h}:00"
+        horas << "#{h}:20"
+        horas << "#{h}:40"
+      end
+      horas
+    end
+
   end
 end
