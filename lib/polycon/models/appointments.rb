@@ -6,11 +6,20 @@ module Polycon
     class Appointments
       attr_accessor :date, :name, :surname, :phone, :notes, :professional
 
-      def self.from_file(date)
+      def initialize(date = nil, name = nil, surname = nil, phone = nil, notes = nil, professional = nil)
+        @date = date
+        @name = name
+        @surname = surname
+        @phone = phone
+        @notes = notes
+        @professional = professional
+      end
+
+      def self.from_file(date, professional)
         appointment = new
-        appointment.professional = File.basename(Dir.getwd)
+        appointment.professional = professional.name
         appointment.date = date
-        path = "#{self.fecha_guion(date)}.paf"
+        path = "#{Polycon::Store.root_path}/#{professional.name}/#{self.fecha_guion(date)}.paf"
         File.open(path, 'r') do |file|
           appointment.surname = file.gets.chomp
           appointment.name = file.gets.chomp
@@ -56,8 +65,9 @@ module Polycon
         (date.gsub " ", "_").gsub ":", "-"
       end
 
-      def self.crear_turno(date, name, surname, phone, notes = nil)
-        File.write(self.create_path(date), "#{surname}\n#{name}\n#{phone}\n#{notes}")
+      def self.crear_turno(date, name, surname, phone, notes = nil, professional)
+        appointment = new(date, name, surname, phone, notes, professional)
+        Polycon::Store.save_appointment(appointment)
       end
 
       def self.existe_turno?(date)

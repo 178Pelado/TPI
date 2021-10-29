@@ -17,7 +17,7 @@ module Polycon
       fecha_pedida = Date.strptime(date, '%Y-%m-%d')
       inicio_semana = fecha_pedida - fecha_pedida.wday()
       fin_semana = inicio_semana + 7
-      appointments = appointments.select { |appt| (inicio_semana..fin_semana).cover? appt.fecha() }
+      appointments.select! { |appt| (inicio_semana..fin_semana).cover? appt.fecha() }
 
       horas = Polycon::Utils.horas()
 
@@ -42,15 +42,15 @@ module Polycon
               </tr>
               <%- horas.each do |h| -%>
                 <tr>
-                  <td><%= h %></td>
+                  <th><%= h %></th>
                   <%- (inicio_semana...fin_semana).each do |f| -%>
-                    <th>
+                    <td>
                     <%- appointments.each do |a| -%>
                       <%- if a.hora() == h && a.fecha() == f -%>
                         <%= a.name %> <%= a.surname %> (<%= a.professional %>)<br>
                       <%- end -%>
                     <%- end -%>
-                    </th>
+                    </td>
                   <%- end -%>
                 </tr>
               <%- end -%>
@@ -60,8 +60,7 @@ module Polycon
       END
 
       #puts template.result binding
-      Polycon::Utils.posicionarme()
-      File.write('prueba.html', (template.result binding))
+      Polycon::Store.save_template(template.result binding)
     end
   end
 end

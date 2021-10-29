@@ -1,4 +1,5 @@
 require "fileutils"
+require 'date'
 
 module Polycon
   module Store
@@ -16,37 +17,57 @@ module Polycon
 
     # @param Appointment appointment
     def self.save_appointment(appointment)
-      # appointment.date es DateTime
-      filename = appointment.date.strftime("%Y-%m-%d_%H-%I")
-      File.write(root_path + "/#{appointment.professional.name}/#{filename}.paf") do |f|
-        f << appointment.surname
-        f << appointment.name
-        f << appointment.phone
-        f << appointment.notes
+      date = DateTime.strptime(appointment.date, '%Y-%m-%d %H:%M')
+      filename = date.strftime("%Y-%m-%d_%H-%M")
+      File.open(root_path + "/#{appointment.professional.name}/#{filename}.paf", 'w') do |f|
+        f << "#{appointment.surname}\n"
+        f << "#{appointment.name}\n"
+        f << "#{appointment.phone}\n"
+        f << "#{appointment.notes}\n" unless appointment.notes.nil?
       end
     end
 
-    def self.exists_professional?(name)
-      File.exists?(name)
+    # @param Professional professional
+    def self.exists_appointment?(date, professional)
+      date = DateTime.strptime(date, '%Y-%m-%d %H:%M')
+      date = date.strftime("%Y-%m-%d_%H-%M")
+      File.exists?(root_path + "/#{professional.name}/#{date}.paf")
     end
 
-    def self.appointments()
-      Dir.children(".")
+    # @param Professional professional
+    def self.exists_professional?(professional)
+      File.exists?(root_path + "/#{professional.name}")
+    end
+
+    # @param Professional professional
+    def self.delete_professional(professional)
+      FileUtils.rm_rf root_path + "/#{professional.name}"
+    end
+
+    # @param Professional professional_old, String new_name
+    def self.rename_professional(professional_old, new_name)
+      File.rename(root_path + "/#{professional_old.name}", root_path + "/#{new_name}")
+    end
+
+    # @param Professional professional
+    def self.appointments(professional)
+      Dir.children(root_path + "/#{professional.name}")
     end
 
     def self.professionals()
-      Dir.children(".").map do |entry|
-        Polycon::Models::Professionals.find(entry)
-      end
+      Dir.children(root_path)
     end
 
     def self.all_appointments
       appointments = []
-      (self.professionals).each do |p|
-        appointments.push(*p.appointments)
-        Polycon::Utils.posicionarme()
+      (Polycon::Models::Professionals.all).each do |p|
+        appointments += p.appointments
       end
       appointments
+    end
+
+    def self.save_template(template)
+      File.write(root_path + '/prueba.html', template)
     end
 
   end

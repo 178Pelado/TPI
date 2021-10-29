@@ -1,4 +1,5 @@
 require 'erb'
+require 'date'
 
 module Polycon
   class A_day
@@ -14,7 +15,7 @@ module Polycon
         appointments = Polycon::Store.all_appointments()
       end
       fecha_pedida = Date.strptime(date, '%Y-%m-%d')
-      appointments = appointments.select { |appt| appt.fecha() == fecha_pedida }
+      appointments.select! { |appt| appt.fecha() == fecha_pedida }
 
       horas = Polycon::Utils.horas()
 
@@ -36,14 +37,14 @@ module Polycon
               </tr>
               <%- horas.each do |h| -%>
                 <tr>
-                  <td><%= h %></td>
-                  <th>
+                  <th><%= h %></th>
+                  <td>
                   <%- appointments.each do |a| -%>
                     <%- if a.hora() == h -%>
                       <%= a.name %> <%= a.surname %> (<%= a.professional %>)<br>
                     <%- end -%>
                   <%- end -%>
-                  </th>
+                  </td>
                 </tr>
               <%- end -%>
             </table>

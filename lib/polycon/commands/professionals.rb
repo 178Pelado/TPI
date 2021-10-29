@@ -13,11 +13,19 @@ module Polycon
         ]
 
         def call(name:, **)
-          Polycon::Utils.posicionarme()
-          if Polycon::Utils.existe_prof?(name)
+          # Polycon::Utils.posicionarme()
+          # if Polycon::Utils.existe_prof?(name)
+          #   warn "Ya existe un profesional llamado #{name}"
+          # else
+          #   Polycon::Models::Professionals.crear_prof(name)
+          #   warn "Se creó correctamente al profesional #{name}"
+          # end
+
+          professional = Polycon::Models::Professionals.find(name)
+          if ! professional.nil?
             warn "Ya existe un profesional llamado #{name}"
           else
-            Polycon::Models::Professionals.crear_prof(name)
+            Polycon::Models::Professionals.crear_directorio_prof(name)
             warn "Se creó correctamente al profesional #{name}"
           end
         end
@@ -34,10 +42,22 @@ module Polycon
         ]
 
         def call(name: nil)
-          Polycon::Utils.posicionarme()
-          if Polycon::Utils.existe_prof?(name)
-            if ! Polycon::Models::Professionals.hay_turno_prof?(name)
-              Polycon::Models::Professionals.eliminar_prof(name)
+          # Polycon::Utils.posicionarme()
+          # if Polycon::Utils.existe_prof?(name)
+          #   if ! Polycon::Models::Professionals.hay_turno_prof?(name)
+          #     Polycon::Models::Professionals.eliminar_prof(name)
+          #     warn "Se eiminó al profesional #{name}"
+          #   else
+          #     warn "No se puede eliminar al profesional, debido a que tiene turnos pendientes"
+          #   end
+          # else
+          #   warn "No se puede eliminar al profesional, debido a que no existe ninguno llamado #{name}"
+          # end
+
+          professional = Polycon::Models::Professionals.find(name)
+          if ! professional.nil?
+            if ! professional.has_appointments?
+              professional.eliminar_directorio_prof()
               warn "Se eiminó al profesional #{name}"
             else
               warn "No se puede eliminar al profesional, debido a que tiene turnos pendientes"
@@ -56,7 +76,13 @@ module Polycon
         ]
 
         def call(*)
-          Polycon::Utils.posicionarme()
+          # Polycon::Utils.posicionarme()
+          # if Polycon::Models::Professionals.existen_prof?
+          #   Polycon::Models::Professionals.listar_prof
+          # else
+          #   warn "No hay profesionales cargados en el sistema"
+          # end
+
           if Polycon::Models::Professionals.existen_prof?
             Polycon::Models::Professionals.listar_prof
           else
@@ -76,10 +102,23 @@ module Polycon
         ]
 
         def call(old_name:, new_name:, **)
-          Polycon::Utils.posicionarme()
-          if Polycon::Utils.existe_prof?(old_name)
-            if ! Polycon::Utils.existe_prof?(new_name)
-              Polycon::Models::Professionals.renombrar_prof(old_name, new_name)
+          # Polycon::Utils.posicionarme()
+          # if Polycon::Utils.existe_prof?(old_name)
+          #   if ! Polycon::Utils.existe_prof?(new_name)
+          #     Polycon::Models::Professionals.renombrar_prof(old_name, new_name)
+          #     warn "Se actualizó el profesional #{old_name} y ahora se llama #{new_name}"
+          #   else
+          #     warn "No se puede renombrar al profesional, debido a que ya existe uno llamado #{new_name}"
+          #   end
+          # else
+          #   warn "No se puede renombrar al profesional, debido a que no existe ninguno llamado #{old_name}"
+          # end
+
+          professional_old = Polycon::Models::Professionals.find(old_name)
+          professional_new = Polycon::Models::Professionals.find(new_name)
+          if ! professional_old.nil?
+            if professional_new.nil?
+              professional_old.renombrar_directorio_prof(new_name)
               warn "Se actualizó el profesional #{old_name} y ahora se llama #{new_name}"
             else
               warn "No se puede renombrar al profesional, debido a que ya existe uno llamado #{new_name}"

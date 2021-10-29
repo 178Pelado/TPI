@@ -3,48 +3,51 @@ module Polycon
     class Professionals
       attr_accessor :name
 
+      #Inicio nuevos métodos
+
       def initialize(name)
         @name = name
       end
 
       def self.existen_prof?
-        ! Dir.empty?(".")
+        ! self.all().empty?
       end
 
       def self.listar_prof
-        Dir.children(".").each do |prof|
-          puts prof
+        self.all().each do |prof|
+          puts prof.name
         end
       end
-
-      def self.crear_prof(name)
-        Dir.mkdir(name)
-      end
-
-      #Inicio nuevos métodos
 
       def self.crear_directorio_prof(name)
         Polycon::Store.save_professional(new(name))
       end
 
-      def self.find(name)
-        professional = new(name)
-        return professional if professional.exists?(name)
+      def eliminar_directorio_prof()
+        Polycon::Store.delete_professional(self)
       end
 
-      def exists?(name)
-        Polycon::Store.exists_professional?(name)
+      def renombrar_directorio_prof(new_name)
+        Polycon::Store::rename_professional(self, new_name)
+      end
+
+      def self.find(name)
+        professional = new(name)
+        return professional if professional.exists?()
+      end
+
+      def exists?()
+        Polycon::Store.exists_professional?(self)
       end
 
       def find_appointment(date)
-        #Implementar llamado al Store y el self.from_file de appointments
+        return Polycon::Models::Appointments.from_file(date, self) if Polycon::Store.exists_appointment?(date, self)
       end
 
       def appointments
-        Polycon::Models::Appointments.posicionarme_prof(name)
-        Polycon::Store.appointments().map do |entry|
+        Polycon::Store.appointments(self).map do |entry|
           date = File.basename entry, ".paf"
-          Polycon::Models::Appointments.from_file(date)
+          Polycon::Models::Appointments.from_file(date, self)
         end
       end
 
@@ -54,25 +57,13 @@ module Polycon
         end.empty?
       end
 
-      #Fin nuevos métodos
-
-      def self.eliminar_prof(name)
-        FileUtils.rm_rf(name)
-      end
-
-      def self.renombrar_prof(old_name, new_name)
-        File.rename(old_name, new_name)
-      end
-
-      def self.hay_turno_prof?(name)
-        f_actual = Time.now.strftime("%Y-%m-%d_%H-%M")
-        Dir.foreach("./#{name}") do |turno|
-          if (turno > f_actual)
-            return true
-          end
+      def self.all()
+        Polycon::Store.professionals().map do |name|
+          self.find(name)
         end
-        false
       end
+
+      #Fin nuevos métodos
 
     end
   end

@@ -17,13 +17,34 @@ module Polycon
         ]
 
         def call(date:, professional:, name:, surname:, phone:, notes: nil)
-          Polycon::Utils.posicionarme()
+          # Polycon::Utils.posicionarme()
+          # if Polycon::Models::Appointments.fecha_hora_correcta?(date)
+          #   if Polycon::Models::Appointments.fecha_posterior?(date)
+          #     if Polycon::Utils.existe_prof?(professional)
+          #       Polycon::Models::Appointments.posicionarme_prof(professional)
+          #       if ! Polycon::Models::Appointments.existe_turno?(date)
+          #         Polycon::Models::Appointments.crear_turno(date, name, surname, phone, notes)
+          #         warn "Se creó un turno con el profesional #{professional} para el #{date}"
+          #       else
+          #         warn "No se pudo crear el turno, debido a que existe otro turno para esa fecha"
+          #       end
+          #     else
+          #       warn "No se pudo crear el turno, debido a que no existe el profesional #{professional}"
+          #     end
+          #   else
+          #     warn "No se pudo crear el turno, debido a que #{date} es anterior a la fecha actual"
+          #   end
+          # else
+          #   warn "No se pudo crear el turno, debido a que la fecha #{date} no respeta el formato"
+          # end
+
           if Polycon::Models::Appointments.fecha_hora_correcta?(date)
             if Polycon::Models::Appointments.fecha_posterior?(date)
-              if Polycon::Utils.existe_prof?(professional)
-                Polycon::Models::Appointments.posicionarme_prof(professional)
-                if ! Polycon::Models::Appointments.existe_turno?(date)
-                  Polycon::Models::Appointments.crear_turno(date, name, surname, phone, notes)
+              prof = Polycon::Models::Professionals.find(professional)
+              if ! prof.nil?
+                appointment = prof.find_appointment(date)
+                if appointment.nil?
+                  Polycon::Models::Appointments.crear_turno(date, name, surname, phone, notes, prof)
                   warn "Se creó un turno con el profesional #{professional} para el #{date}"
                 else
                   warn "No se pudo crear el turno, debido a que existe otro turno para esa fecha"
@@ -215,7 +236,7 @@ module Polycon
             if Polycon::Utils.existe_prof?(professional)
               Polycon::Models::Appointments.posicionarme_prof(professional)
               if Polycon::Models::Appointments.existe_turno?(date)
-                turno = Polycon::Models::Appointments.from_file(date)
+                turno = Polycon::Models::Appointments.from_file(date, professional)
                 turno.edit(options)
                 turno.save(date)
                 warn "Se editó el turno #{date} del profesional #{professional}"
