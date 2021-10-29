@@ -10,6 +10,12 @@ module Polycon
       root_path
     end
 
+    def self.table_path
+      table_path = Dir.home + "/tables"
+      FileUtils.mkdir_p table_path
+      table_path
+    end
+
     def self.filename(date)
       date = DateTime.strptime(date, '%Y-%m-%d %H:%M')
       date.strftime("%Y-%m-%d_%H-%M")
@@ -103,8 +109,8 @@ module Polycon
       appointments
     end
 
-    def self.save_template(template)
-      File.write(root_path + '/prueba.html', template)
+    def self.save_template(filename, template)
+      File.write(table_path + "/#{filename}.html", template)
     end
 
   end

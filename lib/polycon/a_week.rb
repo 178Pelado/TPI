@@ -8,59 +8,26 @@ module Polycon
       headers = %w[Hora/Día]
       title = 'Turnos de una semana'
 
+      fecha_pedida = Date.strptime(date, '%Y-%m-%d')
+
+      filename = "Grilla de la semana del #{fecha_pedida} "
+
       if ! name.nil?
         prof = Polycon::Models::Professionals.find(name)
         appointments = prof.appointments
+        filename += "para #{name}"
       else
         appointments = Polycon::Store.all_appointments()
+        filename += "para todos los profesionales"
       end
-      fecha_pedida = Date.strptime(date, '%Y-%m-%d')
       inicio_semana = fecha_pedida - fecha_pedida.wday()
       fin_semana = inicio_semana + 7
       appointments.select! { |appt| (inicio_semana..fin_semana).cover? appt.fecha() }
 
       horas = Polycon::Utils.horas()
 
-      template = ERB.new <<~END, nil, '-'
-        <!DOCTYPE html>
-          <html lang='en'>
-          <head>
-            <title><%= title %></title>
-            <meta charset="UTF-8">
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-          </head>
-          <body>
-              <table class="table table-bordered text-center">
-              <tr>
-                <%- headers.each do |header| -%>
-                  <th><%= header %></th>
-                <%- end -%>
-                <%- (inicio_semana...fin_semana).each do |f| -%>
-                  <th><%= f %></th>
-                <%- end -%>
-              </tr>
-              <%- horas.each do |h| -%>
-                <tr>
-                  <th><%= h %></th>
-                  <%- (inicio_semana...fin_semana).each do |f| -%>
-                    <td>
-                    <%- appointments.each do |a| -%>
-                      <%- if a.hora() == h && a.fecha() == f -%>
-                        <%= a.name %> <%= a.surname %> (<%= a.professional %>)<br>
-                      <%- end -%>
-                    <%- end -%>
-                    </td>
-                  <%- end -%>
-                </tr>
-              <%- end -%>
-            </table>
-          </body>
-        </html>
-      END
-
-      #puts template.result binding
-      Polycon::Store.save_template(template.result binding)
+      template = ERB.new(File.read("/home/felipe/Ruby/TPI/a_week.html.erb"))
+      Polycon::Store.save_template(filename, (template.result binding))
     end
   end
 end

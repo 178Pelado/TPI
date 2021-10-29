@@ -11,6 +11,7 @@ module Polycon
         def call(date:, professional: nil)
           Polycon::Utils.posicionarme()
           Polycon::A_day.grilla_de_un_dia(date, professional)
+          warn "Se creó la grilla del #{date}"
         end
       end
 
@@ -23,6 +24,7 @@ module Polycon
         def call(date:, professional: nil)
           Polycon::Utils.posicionarme()
           Polycon::A_week.grilla_de_una_semana(date, professional)
+          warn "Se creó la grilla de la semana del #{date}"
         end
       end
 
