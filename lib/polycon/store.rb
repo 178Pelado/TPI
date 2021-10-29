@@ -10,15 +10,20 @@ module Polycon
       root_path
     end
 
-    # @param Professional professional
-    def self.save_professional(professional)
-      FileUtils.mkdir_p root_path + "/#{professional.name}"
+    def self.filename(date)
+      date = DateTime.strptime(date, '%Y-%m-%d %H:%M')
+      date.strftime("%Y-%m-%d_%H-%M")
+    end
+
+    def self.date(entry)
+      date = File.basename entry, ".paf"
+      date = DateTime.strptime(date, '%Y-%m-%d_%H-%M')
+      date.strftime("%Y-%m-%d %H:%M")
     end
 
     # @param Appointment appointment
     def self.save_appointment(appointment)
-      date = DateTime.strptime(appointment.date, '%Y-%m-%d %H:%M')
-      filename = date.strftime("%Y-%m-%d_%H-%M")
+      filename = self.filename(appointment.date)
       File.open(root_path + "/#{appointment.professional.name}/#{filename}.paf", 'w') do |f|
         f << "#{appointment.surname}\n"
         f << "#{appointment.name}\n"
@@ -29,9 +34,41 @@ module Polycon
 
     # @param Professional professional
     def self.exists_appointment?(date, professional)
-      date = DateTime.strptime(date, '%Y-%m-%d %H:%M')
-      date = date.strftime("%Y-%m-%d_%H-%M")
-      File.exists?(root_path + "/#{professional.name}/#{date}.paf")
+      filename = self.filename(date)
+      File.exists?(root_path + "/#{professional.name}/#{filename}.paf")
+    end
+
+    # @param Appointment appointment
+    def self.delete_appointment(appointment)
+      filename = self.filename(appointment.date)
+      File.delete(root_path + "/#{appointment.professional.name}/#{filename}.paf")
+    end
+
+    # @param Appointments appointment_old, String new_date
+    def self.reschedule_appointment(appointment_old, new_date)
+      filename_old = self.filename(appointment_old.date)
+      filename_new = self.filename(new_date)
+      turno_old = root_path + "/#{appointment_old.professional.name}/#{filename_old}.paf"
+      turno_new = root_path + "/#{appointment_old.professional.name}/#{filename_new}.paf"
+      File.rename(turno_old, turno_new)
+    end
+
+    # @param Appointment appointment
+    def self.appointment_from_file(appointment)
+      filename = self.filename(appointment.date)
+      path = "#{root_path}/#{appointment.professional.name}/#{filename}.paf"
+      File.open(path, 'r') do |file|
+        appointment.surname = file.gets.chomp
+        appointment.name = file.gets.chomp
+        appointment.phone = file.gets.chomp
+        appointment.notes = file.gets.chomp unless file.eof?
+      end
+      appointment
+    end
+
+    # @param Professional professional
+    def self.save_professional(professional)
+      FileUtils.mkdir_p root_path + "/#{professional.name}"
     end
 
     # @param Professional professional
