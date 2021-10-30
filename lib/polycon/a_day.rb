@@ -9,7 +9,7 @@ module Polycon
       title = 'Turnos de un día'
 
       fecha_pedida = Date.strptime(date, '%Y-%m-%d')
-      
+
       filename = "Grilla del #{fecha_pedida} "
 
       if ! name.nil?
@@ -22,7 +22,7 @@ module Polycon
       end
       appointments.select! { |appt| appt.fecha() == fecha_pedida }
 
-      horas = Polycon::Utils.horas()
+      horas = Polycon::Store.horas()
 
       template = ERB.new(File.read("/home/felipe/Ruby/TPI/a_day.html.erb"))
       Polycon::Store.save_template(filename, (template.result binding))

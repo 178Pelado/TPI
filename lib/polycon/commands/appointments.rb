@@ -27,7 +27,7 @@ module Polycon
                     Polycon::Models::Appointments.crear_turno(date, name, surname, phone, notes, prof)
                     warn "Se creó un turno con el profesional #{professional} para el #{date}"
                   else
-                    warn "No se pudo crear el turno, debido a que existe otro turno para esa fecha"
+                    warn "No se pudo crear el turno, debido a que existe otro turno para esa fecha con #{professional}"
                   end
                 else
                   warn "No se pudo crear el turno, debido a que no existe el profesional #{professional}"

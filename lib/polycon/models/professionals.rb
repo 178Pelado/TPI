@@ -24,14 +24,12 @@ module Polycon
         Polycon::Store.delete_professional(self)
       end
 
-      def self.existen_prof?
-        ! self.all().empty?
+      def to_s
+        "Nombre: #{name}"
       end
 
-      def self.listar_prof
-        self.all().each do |prof|
-          puts prof.name
-        end
+      def self.existen_prof?
+        ! self.all().empty?
       end
   
       def exists?()
@@ -65,7 +63,9 @@ module Polycon
 
       def cancel_all()
         appointments.each do |appointment|
-          appointment.cancelar_turno
+          if appointment.date > Time.now.strftime("%Y-%m-%d_%H-%M")
+            appointment.cancelar_turno
+          end
         end
       end
 
