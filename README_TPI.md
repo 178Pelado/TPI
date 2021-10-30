@@ -46,6 +46,8 @@ Módulo que contiene los métodos auxiliares para ser llamados desde los command
 
 - Los turnos se dan en bloques cada 20 minutos, siendo el inicio en los minutos 00, 20 y 40, y se considera que durarán el total de tiempo del bloque en el que se encuentren.
 
+- Se asume que los turnos se dan entre las 8 y las 20hs. Siendo el último en el bloque de 19:40 a 20:00 hs
+
 - Los turnos de un/a mismo/a profesional no se solaparán dentro de un mismo bloque (es decir, no existen sobreturnos)
 
 - Se valida que el profesional pedido exista.
@@ -90,7 +92,7 @@ Módulo que contiene los métodos auxiliares para ser llamados desde los command
 
 - Todos los archivos creados tienen la terminación '.html'.
 
-- Todos los archivos creados se guardan en el directorio "tables" dentro del root del usuario. 
+- Todos los archivos creados se guardan en el directorio "tables" dentro del root del usuario.
 
 ### CreateDay
 
