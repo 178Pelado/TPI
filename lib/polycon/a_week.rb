@@ -24,9 +24,9 @@ module Polycon
       fin_semana = inicio_semana + 7
       appointments.select! { |appt| (inicio_semana..fin_semana).cover? appt.fecha() }
 
-      horas = Polycon::Store.horas()
+      horas = Polycon::Store.hours()
 
-      template = ERB.new(File.read("/home/felipe/Ruby/TPI/a_week.html.erb"))
+      template = ERB.new(File.read("./lib/polycon/templates/a_week.html.erb"))
       Polycon::Store.save_template(filename, (template.result binding))
     end
   end

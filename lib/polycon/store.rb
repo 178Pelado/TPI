@@ -113,14 +113,14 @@ module Polycon
       File.write(table_path + "/#{filename}.html", template)
     end
 
-    def self.horas()
-      horas = []
+    def self.hours()
+      hours = []
       (8...20).each do |h|
-        horas << "#{h}:00"
-        horas << "#{h}:20"
-        horas << "#{h}:40"
+        hours << "#{h}:00"
+        hours << "#{h}:20"
+        hours << "#{h}:40"
       end
-      horas
+      hours
     end
 
   end

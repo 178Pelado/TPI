@@ -22,9 +22,9 @@ module Polycon
       end
       appointments.select! { |appt| appt.fecha() == fecha_pedida }
 
-      horas = Polycon::Store.horas()
+      horas = Polycon::Store.hours()
 
-      template = ERB.new(File.read("/home/felipe/Ruby/TPI/a_day.html.erb"))
+      template = ERB.new(File.read("./lib/polycon/templates/a_day.html.erb"))
       Polycon::Store.save_template(filename, (template.result binding))
     end
   end
