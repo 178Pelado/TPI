@@ -52,8 +52,18 @@ class AppointmentsController < ApplicationController
   def destroy
     @appointment.destroy
     respond_to do |format|
-      format.html { redirect_to appointments_url, notice: "Appointment was successfully destroyed." }
+      format.html { redirect_to [@professional, @appointment], notice: "Appointment was successfully canceled." }
       format.json { head :no_content }
+    end
+  end
+
+  def cancel_all #VER TEMA DE TURNOS PENDIENTES/FUTUROS
+    @professional.appointments.each do |a|
+      @appointment = a
+      @appointment.destroy
+    end
+    respond_to do |format|
+      format.html { redirect_to [@professional, @appointment], notice: "Appointment was successfully canceled." }
     end
   end
 

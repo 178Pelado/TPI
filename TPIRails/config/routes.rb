@@ -4,7 +4,10 @@ Rails.application.routes.draw do
   root to: 'professionals#index'
 
   resources :professionals do
-    resources :appointments
+    resources :appointments do
+      collection do
+        get '/cancel-all', action: 'cancel_all'
+      end
+    end
   end
-  
 end

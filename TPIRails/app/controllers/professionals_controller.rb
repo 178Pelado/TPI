@@ -48,11 +48,13 @@ class ProfessionalsController < ApplicationController
   end
 
   # DELETE /professionals/1 or /professionals/1.json
-  def destroy
-    @professional.destroy
+  def destroy #VER TEMA DE TURNOS PENDIENTES/FUTUROS
     respond_to do |format|
-      format.html { redirect_to professionals_url, notice: "Professional was successfully destroyed." }
-      format.json { head :no_content }
+      if @professional.destroy
+        format.html { redirect_to professionals_url, notice: "Professional was successfully destroyed." }
+      else
+        format.html { redirect_to professionals_url, notice: "No se pudo eliminar al profesional, debido a que tiene turnos pendientes." }
+      end
     end
   end
 
