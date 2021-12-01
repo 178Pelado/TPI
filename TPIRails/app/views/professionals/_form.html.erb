@@ -14,9 +14,11 @@
   <div class="field">
     <%= form.label :name %>
     <%= form.text_field :name %>
+    <%= professional.errors[:name][0] %>
   </div>
-
+  <br>
   <div class="actions">
     <%= form.submit %>
   </div>
+  <br>
 <% end %>

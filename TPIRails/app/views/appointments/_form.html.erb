@@ -14,29 +14,35 @@
   <div class="field">
     <%= form.label :date %>
     <%= form.datetime_select :date %>
+    <%= appointment.errors[:date][0] %>
   </div>
-
+  <br>
   <div class="field">
     <%= form.label :name %>
     <%= form.text_field :name %>
+    <%= appointment.errors[:name][0] %>
   </div>
-
+  <br>
   <div class="field">
     <%= form.label :surname %>
     <%= form.text_field :surname %>
+    <%= appointment.errors[:surname][0] %>
   </div>
-
+  <br>
   <div class="field">
     <%= form.label :phone %>
     <%= form.text_field :phone %>
+    <%= appointment.errors[:phone][0] %>
   </div>
-
+  <br>
   <div class="field">
     <%= form.label :notes %>
     <%= form.text_field :notes %>
+    <%= appointment.errors[:notes][0] %>
   </div>
-
+  <br>
   <div class="actions">
     <%= form.submit %>
   </div>
+  <br>
 <% end %>

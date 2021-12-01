@@ -1,5 +1,7 @@
+require 'open-uri'
+
 class ProfessionalsController < ApplicationController
-  before_action :set_professional, only: %i[ show edit update destroy ]
+  before_action :set_professional, only: %i[ show edit update destroy cancel_all_appointments]
 
   # GET /professionals or /professionals.json
   def index
@@ -48,13 +50,20 @@ class ProfessionalsController < ApplicationController
   end
 
   # DELETE /professionals/1 or /professionals/1.json
-  def destroy #VER TEMA DE TURNOS PENDIENTES/FUTUROS
+  def destroy
     respond_to do |format|
       if @professional.destroy
         format.html { redirect_to professionals_url, notice: "Professional was successfully destroyed." }
       else
         format.html { redirect_to professionals_url, notice: "No se pudo eliminar al profesional, debido a que tiene turnos pendientes." }
       end
+    end
+  end
+
+  def cancel_all_appointments
+    @professional.appointments.destroy_all
+    respond_to do |format|
+      format.html { redirect_to [@professional, @appointment], notice: "Appointment was successfully canceled." }
     end
   end
 
