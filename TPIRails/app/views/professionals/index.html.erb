@@ -16,8 +16,12 @@
         <td><%= professional.name %></td>
         <td><%= link_to 'Show', professional %></td>
         <td><%= link_to 'Appointments', professional_appointments_path(professional) %></td>
-        <td><%= link_to 'Edit', edit_professional_path(professional) %></td>
-        <td><%= link_to 'Destroy', professional, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% if can? :update, Professional %>
+          <td><%= link_to 'Edit', edit_professional_path(professional) %></td>
+        <% end %>
+        <% if can? :destroy, Professional %>
+          <td><%= link_to 'Destroy', professional, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>
@@ -25,4 +29,6 @@
 
 <br>
 
-<%= link_to 'New Professional', new_professional_path %>
+<% if can? :create, Professional %>
+  <%= link_to 'New Professional', new_professional_path %>
+<% end %>

@@ -1,7 +1,5 @@
-require 'open-uri'
-
 class ProfessionalsController < ApplicationController
-  before_action :set_professional, only: %i[ show edit update destroy cancel_all_appointments]
+  load_and_authorize_resource
 
   # GET /professionals or /professionals.json
   def index
@@ -14,7 +12,6 @@ class ProfessionalsController < ApplicationController
 
   # GET /professionals/new
   def new
-    @professional = Professional.new
   end
 
   # GET /professionals/1/edit
@@ -68,11 +65,6 @@ class ProfessionalsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_professional
-      @professional = Professional.find(params[:id])
-    end
-
     # Only allow a list of trusted parameters through.
     def professional_params
       params.require(:professional).permit(:name)

@@ -34,4 +34,6 @@
 # prof.save!
 # puts prof.id
 
-User.create(email: 'admin@gmail.com', password: '123456')
+User.create(email: 'consulta@gmail.com', password: '123456', role: 0)
+User.create(email: 'asistencia@gmail.com', password: '123456', role: 1)
+User.create(email: 'admin@gmail.com', password: '123456', role: 2)
