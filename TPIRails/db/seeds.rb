@@ -33,3 +33,5 @@
 # prof.id = 1
 # prof.save!
 # puts prof.id
+
+User.create(email: 'admin@gmail.com', password: '123456')
