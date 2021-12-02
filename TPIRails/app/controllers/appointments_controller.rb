@@ -4,7 +4,17 @@ class AppointmentsController < ApplicationController
 
   # GET /appointments or /appointments.json
   def index
-    @appointments = @professional.appointments
+    if filter_params[:date].present?
+      @appointments = @professional.appointments.filter_by_date(filter_params[:date])
+    else
+      @appointments = @professional.appointments
+    end
+    @f = filter_params[:date]
+  end
+
+  def index_date
+    @appointments = @professional.appointments.first
+    format.html { redirect_to [@professional, @appointment], notice: "Appointment was successfully canceled." }
   end
 
   # GET /appointments/1 or /appointments/1.json
@@ -66,6 +76,14 @@ class AppointmentsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_appointment
       @appointment = Appointment.find(params[:id])
+    end
+
+    def filter_params
+      if params.key?(:filters)
+        params.require(:filters).permit(:date)
+      else
+        {}
+      end
     end
 
     # Only allow a list of trusted parameters through.

@@ -12,6 +12,8 @@ class Appointment < ApplicationRecord
   validate :appointment_date_cannot_be_in_the_past
   validate :appointment_date
 
+  scope :filter_by_date, -> (date_f) { where("date(date) = ?", date_f) }
+
   def appointment_date_cannot_be_in_the_past
     errors.add(:date, 'no puede ser en el pasado') if date < DateTime.now
   end
