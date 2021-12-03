@@ -11,4 +11,8 @@ Rails.application.routes.draw do
       delete 'cancel_all_appointments', action: 'cancel_all_appointments'
     end
   end
+  scope "/administracion" do
+    resources :users
+  end
+  
 end

@@ -17,6 +17,9 @@
       <%= link_to "Cerrar sesión", destroy_user_session_path, method: :delete %>
     </p>
     <%= link_to "Professionals", professionals_path %>
+    <% if can? :read, User %>
+      <%= link_to "Users", users_path %>
+    <% end %>
   <% end %>
 
   <p class="notice"><%= notice %></p>

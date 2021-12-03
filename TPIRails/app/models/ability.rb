@@ -12,10 +12,10 @@ class Ability
       elsif user.asistencia?
         can :manage, Appointment
         can :read, :all
-        cannot :read, User
+        cannot :manage, User
       else
         can :read, :all
-        cannot :read, User
+        cannot :manage, User
       end
     #
     # The first argument to `can` is the action you are giving the user
