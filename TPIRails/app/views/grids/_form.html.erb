@@ -1,0 +1,20 @@
+<%= form_for :form_grid, url: export_grids_path do |form| %>
+
+  <div class="field">
+    <%= form.label :professional, "Professional:" %>
+    <%= form.collection_select :professional, Professional.all(), :id, :name, {:prompt => "Select a Professional"}, :include_blank => true %>
+  </div>
+  
+  <div class="field">
+    <%= form.label :date, "Date:" %>
+    <%= form.date_field :date %>
+  </div>
+
+
+  <div class="field">
+    <%= form.label :type, "Type:" %>
+    <%= form.select(:type, [['Day', 0], ['Week', 1]]) %>
+  </div>
+
+  <%= form.submit "Create a grid", data: {disable_with: false} %>
+<% end %>

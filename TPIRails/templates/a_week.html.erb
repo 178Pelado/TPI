@@ -21,7 +21,7 @@
           <% (inicio_semana...fin_semana).each do |f| %>
             <td>
             <% appointments.each do |a| %>
-              <% if a.hora() == h && a.fecha() == f %>
+              <% if a.date.strftime('%H:%M') == h && a.date.to_date == f %>
                 <%= a.name %> <%= a.surname %> (<%= a.professional.name %>)<br>
               <% end %>
             <% end %>

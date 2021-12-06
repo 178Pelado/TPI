@@ -60,7 +60,7 @@ class ProfessionalsController < ApplicationController
   def cancel_all_appointments
     @professional.appointments.destroy_all
     respond_to do |format|
-      format.html { redirect_to [@professional, @appointment], notice: "Appointment was successfully canceled." }
+      format.html { redirect_to professional_appointments_path(@professional), notice: "Appointment was successfully canceled." }
     end
   end
 

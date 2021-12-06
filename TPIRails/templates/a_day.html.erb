@@ -18,7 +18,7 @@
           <th><%= h %></th>
           <td>
           <% appointments.each do |a| %>
-            <% if a.hora() == h %>
+            <% if a.date.strftime('%H:%M') == h %>
               <%= a.name %> <%= a.surname %> (<%= a.professional.name %>)<br>
             <% end %>
           <% end %>

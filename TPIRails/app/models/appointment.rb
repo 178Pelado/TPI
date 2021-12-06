@@ -21,6 +21,7 @@ class Appointment < ApplicationRecord
   def appointment_date
     horarios = [0, 20, 40]
     errors.add(:date, 'los turnos se dan en un espacio de 20 minutos (00, 20 y 40)') unless horarios.include?(date.min)
+    errors.add(:date, 'los turnos se dan entre las 8 y las 20hs') if date.hour >= 20 || date.hour < 8
   end
 
 end

@@ -14,5 +14,7 @@ Rails.application.routes.draw do
   scope "/administracion" do
     resources :users
   end
-  
+  get 'create_grids', to: 'grids#new'
+  post 'export_grids', to: 'grids#export'
+
 end
